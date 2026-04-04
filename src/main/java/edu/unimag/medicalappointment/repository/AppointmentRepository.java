@@ -2,6 +2,10 @@ package edu.unimag.medicalappointment.repository;
 
 import edu.unimag.medicalappointment.domain.entity.Appointment;
 import edu.unimag.medicalappointment.domain.entity.enums.AppointmentStatus;
+import edu.unimag.medicalappointment.repository.projection.DoctorAppointmentCountProjection;
+import edu.unimag.medicalappointment.repository.projection.OfficeOccupancyProjection;
+import edu.unimag.medicalappointment.repository.projection.PatientNoShowAppointmentProjection;
+import edu.unimag.medicalappointment.repository.projection.SpecialtyCountProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -73,42 +77,50 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
                                             @Param("statuses")  List<AppointmentStatus> statuses);
 
     @Query("""
-        SELECT a.office.id, COUNT(a)
+        SELECT new edu.unimag.medicalappointment.repository.projection.OfficeOccupancyProjection(
+            a.office.id, COUNT(a)
+        )
         FROM Appointment a
         WHERE a.startAt BETWEEN :from AND :to
         GROUP BY a.office.id
     """)
-    List<Object[]> calculateOfficeOccupancy(
+    List<OfficeOccupancyProjection> calculateOfficeOccupancy(
         @Param("from") LocalDateTime from,
         @Param("to") LocalDateTime to
     );
 
     @Query("""
-        SELECT a.doctor.specialty.id,COUNT(a) 
+        SELECT new edu.unimag.medicalappointment.repository.projection.SpecialtyCountProjection(
+            a.doctor.specialty.id,COUNT(a)
+        )
         FROM Appointment a
         WHERE a.status IN :statuses
         GROUP BY a.doctor.specialty.id
     """)
-    List<Object[]> countBySpecialty(@Param("statuses") List<AppointmentStatus> statuses);
+    List<SpecialtyCountProjection> countBySpecialty(@Param("statuses") List<AppointmentStatus> statuses);
 
     @Query("""
-        SELECT a.doctor.id, COUNT(a)
+        SELECT new edu.unimag.medicalappointment.repository.projection.DoctorAppointmentCountProjection(
+            a.doctor.id, COUNT(a)
+        )
         FROM Appointment a
         WHERE a.status = :status
         GROUP BY a.doctor.id
         ORDER BY COUNT(a) DESC
     """)
-    List<Object[]> countCompletedAppointmentsByDoctor(@Param("status") AppointmentStatus status);
+    List<DoctorAppointmentCountProjection> countCompletedAppointmentsByDoctor(@Param("status") AppointmentStatus status);
 
     @Query("""
-        SELECT a.patient.id, COUNT(a)
+        SELECT new edu.unimag.medicalappointment.repository.projection.PatientNoShowAppointmentProjection(
+            a.patient.id, COUNT(a)
+        )
         FROM Appointment a
         WHERE a.status = :status
             AND a.startAt BETWEEN :from AND :to
         GROUP BY a.patient.id
         ORDER BY COUNT(a) DESC
     """)
-    List<Object[]> countNoShowAppointmentsByPatient(@Param("status")  AppointmentStatus status,
-                                                    @Param("from") LocalDateTime from,
-                                                    @Param("to") LocalDateTime to);
+    List<PatientNoShowAppointmentProjection> countNoShowAppointmentsByPatient(@Param("status")  AppointmentStatus status,
+                                                                              @Param("from") LocalDateTime from,
+                                                                              @Param("to") LocalDateTime to);
 }

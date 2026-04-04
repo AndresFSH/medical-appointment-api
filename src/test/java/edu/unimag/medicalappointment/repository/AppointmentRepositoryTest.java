@@ -2,6 +2,7 @@ package edu.unimag.medicalappointment.repository;
 
 import edu.unimag.medicalappointment.domain.entity.*;
 import edu.unimag.medicalappointment.domain.entity.enums.AppointmentStatus;
+import edu.unimag.medicalappointment.repository.projection.SpecialtyCountProjection;
 import edu.unimag.medicalappointment.testutil.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -212,7 +213,7 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
         var result = appointmentRepo.calculateOfficeOccupancy(BASE, BASE.plusDays(1));
 
         assertThat(result).hasSize(1);
-        assertThat((Long) result.getFirst()[1]).isEqualTo(3L);
+        assertThat(result.getFirst().appointmentCount()).isEqualTo(3L);
     }
 
     @Test
@@ -230,11 +231,11 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 
         var result = appointmentRepo.countBySpecialty(List.of(AppointmentStatus.CANCELLED, AppointmentStatus.NO_SHOW));
         assertThat(result).hasSize(2);
-        long total = result.stream().mapToLong(row -> (Long) row[1]).sum();
+        long total = result.stream().mapToLong(SpecialtyCountProjection::appointmentCount   ).sum();
         assertThat(total).isEqualTo(3L);
         UUID expectedSpecialtyId = doctor.getSpecialty().getId();
-        long countForMainSpecialty = result.stream().filter(row -> row[0].equals(expectedSpecialtyId))
-                .mapToLong(row -> (Long) row[1]).findFirst().orElse(0L);
+        long countForMainSpecialty = result.stream().filter(p -> p.specialtyId().equals(expectedSpecialtyId))
+                .mapToLong(SpecialtyCountProjection::appointmentCount).findFirst().orElse(0L);
         assertThat(countForMainSpecialty).isEqualTo(2L);
     }
 
@@ -258,11 +259,11 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 
         assertThat(result).hasSize(2);
 
-        assertThat(result.getFirst()[0]).isEqualTo(doctor.getId());
-        assertThat((Long) result.getFirst()[1]).isEqualTo(2L);
+        assertThat(result.getFirst().doctorId()).isEqualTo(doctor.getId());
+        assertThat((Long) result.getFirst().appointmentCount()).isEqualTo(2L);
 
-        assertThat(result.get(1)[0]).isEqualTo(otherDoctor.getId());
-        assertThat((Long) result.get(1)[1]).isEqualTo(1L);
+        assertThat(result.get(1).doctorId()).isEqualTo(otherDoctor.getId());
+        assertThat((Long) result.get(1).appointmentCount()).isEqualTo(1L);
     }
 
     @Test
@@ -289,11 +290,11 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 
         assertThat(result).hasSize(2);
 
-        assertThat(result.getFirst()[0]).isEqualTo(patient.getId());
-        assertThat((Long) result.getFirst()[1]).isEqualTo(2L);
+        assertThat(result.getFirst().patientId()).isEqualTo(patient.getId());
+        assertThat((Long) result.getFirst().appointmentCount()).isEqualTo(2L);
 
-        assertThat(result.get(1)[0]).isEqualTo(otherPatient.getId());
-        assertThat((Long) result.get(1)[1]).isEqualTo(1L);
+        assertThat(result.get(1).patientId()).isEqualTo(otherPatient.getId());
+        assertThat((Long) result.get(1).appointmentCount()).isEqualTo(1L);
 
     }
 
