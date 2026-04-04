@@ -2,6 +2,7 @@ package edu.unimag.medicalappointment.domain.entity;
 
 import edu.unimag.medicalappointment.domain.entity.enums.PatientStatus;
 import jakarta.persistence.*;
+import jakarta.validation.ValidationException;
 import lombok.*;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "patients")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Patient {
@@ -33,7 +34,24 @@ public class Patient {
     }
 
     public void setEmail(String email) {
-        this.email = email.toLowerCase().trim();
+        this.email = normalize(email);
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void normalizeFields() {
+        this.email = normalize(this.email);
+    }
+
+    private static String normalize(String value) {
+        if (value == null) {
+            throw new ValidationException("email must not be null");
+        }
+        String normalized = value.trim().toLowerCase();
+        if (normalized.isEmpty()) {
+            throw new ValidationException("email must not be blank");
+        }
+        return normalized;
     }
 
 }

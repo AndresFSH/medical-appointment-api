@@ -8,7 +8,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "doctors")
 @Getter @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Doctor {
