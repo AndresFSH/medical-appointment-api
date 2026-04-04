@@ -28,16 +28,17 @@ class DoctorRepositoryTest extends AbstractRepositoryIT {
     @DisplayName("Returns a list of active doctors with a given specialty")
     void shouldFindBySpecialtyIdAndActiveTrue() {
         var specialty = specialtyRepo.save(SpecialtyRepositoryTestFactory.create());
-        var saved = doctorRepo.save(DoctorRepositoryTestFactory.create(specialty));
+        doctorRepo.save(DoctorRepositoryTestFactory.create(specialty));
+        doctorRepo.save(DoctorRepositoryTestFactory.create("inactive", false, specialty));
 
-        var result = doctorRepo.findBySpecialtyIdAndActiveTrue(saved.getSpecialty().getId());
+        var result = doctorRepo.findBySpecialtyIdAndActiveTrue(specialty.getId());
         assertThat(result).hasSize(1);
         assertThat(result).extracting(d -> d.getSpecialty().getId()).contains(specialty.getId());
         assertThat(result).extracting(Doctor::isActive).containsOnly(true);
     }
 
     @Test
-    @DisplayName("Update a doctor's active status")
+    @DisplayName("Updates a doctor's active status")
     void shouldUpdateActive(){
         var specialty = specialtyRepo.save(SpecialtyRepositoryTestFactory.create());
         var saved = doctorRepo.save(DoctorRepositoryTestFactory.create("doctor",false,specialty));
@@ -50,7 +51,7 @@ class DoctorRepositoryTest extends AbstractRepositoryIT {
     }
 
     @Test
-    @DisplayName("Delete a doctor")
+    @DisplayName("Deletes a doctor")
     void shouldDelete(){
         var specialty = specialtyRepo.save(SpecialtyRepositoryTestFactory.create());
         var saved = doctorRepo.save(DoctorRepositoryTestFactory.create(specialty));

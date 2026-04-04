@@ -24,13 +24,13 @@ public class AppointmentTypeRepositoryTest extends AbstractRepositoryIT{
     @DisplayName("Returns true if there is an appointment type with a given name")
     void existsByName_whenExists_returnsTrue(){
         var saved = appointmentTypeRepo.save(AppointmentTypeRepositoryTestFactory.create("type",60));
-        assertThat(appointmentTypeRepo.existsByName(saved.getName())).isTrue();
+        assertThat(appointmentTypeRepo.existsByName("type")).isTrue();
     }
 
     @Test
     @DisplayName("Returns false if there is no appointment type with a given name")
     void existsByName_whenDoesNotExist_returnsFalse(){
-        var saved = appointmentTypeRepo.save(AppointmentTypeRepositoryTestFactory.create("type",60));
+        appointmentTypeRepo.save(AppointmentTypeRepositoryTestFactory.create("type",60));
         assertThat(appointmentTypeRepo.existsByName("other")).isFalse();
     }
 

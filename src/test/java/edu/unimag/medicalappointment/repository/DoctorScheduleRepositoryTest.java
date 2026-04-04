@@ -44,7 +44,7 @@ class DoctorScheduleRepositoryTest extends AbstractRepositoryIT {
     @Test
     @DisplayName("Returns a doctor's schedule by day of the week")
     void shouldFindByDoctorIdAndDayOfWeek() {
-        var saved = doctorScheduleRepo.save(DoctorScheduleRepositoryTestFactory.create(doctor,
+        doctorScheduleRepo.save(DoctorScheduleRepositoryTestFactory.create(doctor,
                 DayOfWeek.FRIDAY, START_TIME, END_TIME));
 
         var result = doctorScheduleRepo.findByDoctorIdAndDayOfWeek(doctor.getId(), DayOfWeek.FRIDAY);
@@ -56,7 +56,7 @@ class DoctorScheduleRepositoryTest extends AbstractRepositoryIT {
     @Test
     @DisplayName("Returns true if a doctor's schedule exists for a given doctor ID and day of the week")
     void existsByDoctorIdAndDayOfWeek_whenExists_returnsTrue() {
-        var saved = doctorScheduleRepo.save(DoctorScheduleRepositoryTestFactory.create(doctor,
+        doctorScheduleRepo.save(DoctorScheduleRepositoryTestFactory.create(doctor,
                 DayOfWeek.FRIDAY, START_TIME, END_TIME));
 
         var result = doctorScheduleRepo.existsByDoctorIdAndDayOfWeek(doctor.getId(), DayOfWeek.FRIDAY);
@@ -79,6 +79,7 @@ class DoctorScheduleRepositoryTest extends AbstractRepositoryIT {
         var saved = doctorScheduleRepo.save(DoctorScheduleRepositoryTestFactory.create(doctor,
                 DayOfWeek.FRIDAY, START_TIME, END_TIME));
         saved.updateTimeRange(START_TIME.plusHours(1), END_TIME.plusHours(1));
+        doctorScheduleRepo.save(saved);
         assertThat(doctorScheduleRepo.findById(saved.getId())).isPresent().get().
                 extracting(DoctorSchedule::getStartTime).isEqualTo(START_TIME.plusHours(1));
     }
