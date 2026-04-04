@@ -78,11 +78,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 
     @Query("""
         SELECT new edu.unimag.medicalappointment.repository.projection.OfficeOccupancyProjection(
-            a.office.id, COUNT(a)
+            a.office.id,a.office.name,COUNT(a)
         )
         FROM Appointment a
         WHERE a.startAt BETWEEN :from AND :to
-        GROUP BY a.office.id
+        GROUP BY a.office.id,a.office.name
     """)
     List<OfficeOccupancyProjection> calculateOfficeOccupancy(
         @Param("from") LocalDateTime from,
@@ -91,33 +91,33 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 
     @Query("""
         SELECT new edu.unimag.medicalappointment.repository.projection.SpecialtyCountProjection(
-            a.doctor.specialty.id,COUNT(a)
+            a.doctor.specialty.id,a.doctor.specialty.name,COUNT(a)
         )
         FROM Appointment a
         WHERE a.status IN :statuses
-        GROUP BY a.doctor.specialty.id
+        GROUP BY a.doctor.specialty.id, a.doctor.specialty.name
     """)
     List<SpecialtyCountProjection> countBySpecialty(@Param("statuses") List<AppointmentStatus> statuses);
 
     @Query("""
         SELECT new edu.unimag.medicalappointment.repository.projection.DoctorAppointmentCountProjection(
-            a.doctor.id, COUNT(a)
+            a.doctor.id,a.doctor.fullName,COUNT(a)
         )
         FROM Appointment a
         WHERE a.status = :status
-        GROUP BY a.doctor.id
+        GROUP BY a.doctor.id, a.doctor.fullName
         ORDER BY COUNT(a) DESC
     """)
     List<DoctorAppointmentCountProjection> countCompletedAppointmentsByDoctor(@Param("status") AppointmentStatus status);
 
     @Query("""
         SELECT new edu.unimag.medicalappointment.repository.projection.PatientNoShowAppointmentProjection(
-            a.patient.id, COUNT(a)
+            a.patient.id,a.patient.fullName,COUNT(a)
         )
         FROM Appointment a
         WHERE a.status = :status
             AND a.startAt BETWEEN :from AND :to
-        GROUP BY a.patient.id
+        GROUP BY a.patient.id, a.patient.fullName
         ORDER BY COUNT(a) DESC
     """)
     List<PatientNoShowAppointmentProjection> countNoShowAppointmentsByPatient(@Param("status")  AppointmentStatus status,
