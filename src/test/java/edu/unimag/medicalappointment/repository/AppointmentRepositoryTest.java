@@ -214,24 +214,25 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 
         assertThat(result).hasSize(1);
         assertThat(result.getFirst().appointmentCount()).isEqualTo(3L);
+        assertThat(result.getFirst().officeName()).isEqualTo("office");
     }
 
     @Test
     @DisplayName("Returns a list of specialties with a count of no-show or cancelled appointments")
     void shouldCountBySpecialty() {
-        appointmentRepo.save(AppointmentRepositoryTestFactory.cancelledAppointmentFromScheduled(patient, doctor,
+        var saved = appointmentRepo.save(AppointmentRepositoryTestFactory.cancelledAppointmentFromScheduled(patient, doctor,
                 office, appointmentType, BASE,"reason"));
         appointmentRepo.save(AppointmentRepositoryTestFactory.cancelledAppointmentFromConfirmed(patient, doctor,
-                office, appointmentType, BASE, "reason"));
+                office, appointmentType, BASE.plusHours(1), "reason"));
 
         var otherSpecialty = specialtyRepo.save(SpecialtyRepositoryTestFactory.create("other"));
         var otherDoctor =  doctorRepo.save(DoctorRepositoryTestFactory.create(otherSpecialty));
         appointmentRepo.save(AppointmentRepositoryTestFactory.noShowAppointment(patient, otherDoctor,
-                office, appointmentType, BASE));
+                office, appointmentType, BASE.plusHours(2)));
 
         var result = appointmentRepo.countBySpecialty(List.of(AppointmentStatus.CANCELLED, AppointmentStatus.NO_SHOW));
         assertThat(result).hasSize(2);
-        long total = result.stream().mapToLong(SpecialtyCountProjection::appointmentCount   ).sum();
+        long total = result.stream().mapToLong(SpecialtyCountProjection::appointmentCount).sum();
         assertThat(total).isEqualTo(3L);
         UUID expectedSpecialtyId = doctor.getSpecialty().getId();
         long countForMainSpecialty = result.stream().filter(p -> p.specialtyId().equals(expectedSpecialtyId))
@@ -264,6 +265,7 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 
         assertThat(result.get(1).doctorId()).isEqualTo(otherDoctor.getId());
         assertThat((Long) result.get(1).appointmentCount()).isEqualTo(1L);
+        assertThat(result.getFirst().doctorName()).isEqualTo(doctor.getFullName());
     }
 
     @Test
@@ -295,6 +297,7 @@ class AppointmentRepositoryTest extends AbstractRepositoryIT {
 
         assertThat(result.get(1).patientId()).isEqualTo(otherPatient.getId());
         assertThat((Long) result.get(1).appointmentCount()).isEqualTo(1L);
+        assertThat(result.getFirst().patientName()).isEqualTo(patient.getFullName());
 
     }
 
