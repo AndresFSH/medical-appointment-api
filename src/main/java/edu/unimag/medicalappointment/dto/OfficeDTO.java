@@ -9,7 +9,7 @@ import java.util.UUID;
 public class OfficeDTO {
 
     public record CreateOfficeRequest(@NotBlank String name, @NotBlank String location){}
-    public record UpdateOfficeRequest(@NotNull OfficeStatus status){}
+    public record UpdateOfficeRequest(String name, String location,@NotNull OfficeStatus status){}
     public record OfficeResponse(UUID officeId, String name, String location, OfficeStatus status){}
     public record OfficeSummary(UUID officeId, String name, String location){}
 
