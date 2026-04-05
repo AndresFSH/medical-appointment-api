@@ -26,7 +26,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     public DoctorResponse createDoctor(CreateDoctorRequest req) {
         Specialty specialty = specialtyRepo.findById(req.specialtyId()).
-                orElseThrow(()-> new ResourceNotFoundException("specialty with id "+req.specialtyId()+" not found"));
+                orElseThrow(()-> new ResourceNotFoundException("Specialty with id "+req.specialtyId()+" not found"));
 
         Doctor doctor = Doctor.builder().fullName(req.fullName()).specialty(specialty).build();
         return doctorMapper.toResponse(doctorRepo.save(doctor));
@@ -36,10 +36,10 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     public DoctorResponse updateDoctor(UUID id, UpdateDoctorRequest req) {
         Doctor doctor = doctorRepo.findById(id).
-                orElseThrow(()-> new ResourceNotFoundException("doctor with id "+id+" not found"));
+                orElseThrow(()-> new ResourceNotFoundException("Doctor with id "+id+" not found"));
 
         Specialty specialty = specialtyRepo.findById(req.specialtyId()).
-                orElseThrow(()-> new ResourceNotFoundException("specialty with id "+req.specialtyId()+" not found"));
+                orElseThrow(()-> new ResourceNotFoundException("Specialty with id "+req.specialtyId()+" not found"));
 
         doctor.setFullName(req.fullName());
         doctor.setSpecialty(specialty);
