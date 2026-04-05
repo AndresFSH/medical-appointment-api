@@ -2,10 +2,10 @@ package edu.unimag.medicalappointment.repository;
 
 import edu.unimag.medicalappointment.domain.entity.Appointment;
 import edu.unimag.medicalappointment.domain.entity.enums.AppointmentStatus;
-import edu.unimag.medicalappointment.repository.projection.DoctorAppointmentCountProjection;
-import edu.unimag.medicalappointment.repository.projection.OfficeOccupancyProjection;
-import edu.unimag.medicalappointment.repository.projection.PatientNoShowAppointmentProjection;
-import edu.unimag.medicalappointment.repository.projection.SpecialtyCountProjection;
+import edu.unimag.medicalappointment.domain.projection.DoctorAppointmentCountProjection;
+import edu.unimag.medicalappointment.domain.projection.OfficeOccupancyProjection;
+import edu.unimag.medicalappointment.domain.projection.PatientNoShowAppointmentProjection;
+import edu.unimag.medicalappointment.domain.projection.SpecialtyCountProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -77,7 +77,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
                                             @Param("statuses")  List<AppointmentStatus> statuses);
 
     @Query("""
-        SELECT new edu.unimag.medicalappointment.repository.projection.OfficeOccupancyProjection(
+        SELECT new edu.unimag.medicalappointment.domain.projection.OfficeOccupancyProjection(
             a.office.id,a.office.name,COUNT(a)
         )
         FROM Appointment a
@@ -90,7 +90,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     );
 
     @Query("""
-        SELECT new edu.unimag.medicalappointment.repository.projection.SpecialtyCountProjection(
+        SELECT new edu.unimag.medicalappointment.domain.projection.SpecialtyCountProjection(
             a.doctor.specialty.id,a.doctor.specialty.name,COUNT(a)
         )
         FROM Appointment a
@@ -100,7 +100,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     List<SpecialtyCountProjection> countBySpecialty(@Param("statuses") List<AppointmentStatus> statuses);
 
     @Query("""
-        SELECT new edu.unimag.medicalappointment.repository.projection.DoctorAppointmentCountProjection(
+        SELECT new edu.unimag.medicalappointment.domain.projection.DoctorAppointmentCountProjection(
             a.doctor.id,a.doctor.fullName,COUNT(a)
         )
         FROM Appointment a
@@ -111,7 +111,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     List<DoctorAppointmentCountProjection> countCompletedAppointmentsByDoctor(@Param("status") AppointmentStatus status);
 
     @Query("""
-        SELECT new edu.unimag.medicalappointment.repository.projection.PatientNoShowAppointmentProjection(
+        SELECT new edu.unimag.medicalappointment.domain.projection.PatientNoShowAppointmentProjection(
             a.patient.id,a.patient.fullName,COUNT(a)
         )
         FROM Appointment a

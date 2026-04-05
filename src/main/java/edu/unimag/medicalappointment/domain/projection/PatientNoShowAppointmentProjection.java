@@ -1,4 +1,4 @@
-package edu.unimag.medicalappointment.repository.projection;
+package edu.unimag.medicalappointment.domain.projection;
 
 import java.util.UUID;
 
