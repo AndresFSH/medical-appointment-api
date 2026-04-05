@@ -20,8 +20,8 @@ public class Patient {
     @Setter
     @Column(name = "full_name", nullable = false) private String fullName;
     @Column(name = "email",nullable = false, unique = true)private String email;
-    @Setter @Builder.Default @Enumerated(EnumType.STRING) @Column(name = "status", nullable = false)
-    private PatientStatus status = PatientStatus.ACTIVE;
+    @Setter(AccessLevel.PRIVATE) @Builder.Default @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false) private PatientStatus status = PatientStatus.ACTIVE;
 
     @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY) private List<Appointment> appointments;
 

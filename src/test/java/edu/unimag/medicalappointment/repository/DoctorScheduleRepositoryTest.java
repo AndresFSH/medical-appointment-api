@@ -74,6 +74,26 @@ class DoctorScheduleRepositoryTest extends AbstractRepositoryIT {
     }
 
     @Test
+    @DisplayName("findByDoctorId returns only schedules for the given doctor")
+    void shouldFindByDoctorId() {
+        doctorScheduleRepo.save(DoctorScheduleRepositoryTestFactory.create(doctor,
+                DayOfWeek.FRIDAY, START_TIME, END_TIME));
+
+        Doctor otherDoctor = doctorRepo.save(DoctorRepositoryTestFactory.create(
+                specialtyRepo.save(SpecialtyRepositoryTestFactory.create())));
+        doctorScheduleRepo.save(DoctorScheduleRepositoryTestFactory.create(otherDoctor,
+                DayOfWeek.MONDAY, START_TIME, END_TIME));
+
+        var result = doctorScheduleRepo.findByDoctorId(doctor.getId());
+
+        assertThat(result).hasSize(1);
+        assertThat(result).extracting(ds -> ds.getDoctor().getId())
+                .containsOnly(doctor.getId());
+        assertThat(result).extracting(DoctorSchedule::getDayOfWeek)
+                .containsOnly(DayOfWeek.FRIDAY);
+    }
+
+    @Test
     @DisplayName("Updates START TIME and END TIME")
     void shouldUpdateStartTimeAndEndTime() {
         var saved = doctorScheduleRepo.save(DoctorScheduleRepositoryTestFactory.create(doctor,
