@@ -19,7 +19,7 @@ public class Office {
     @Id @GeneratedValue(strategy = GenerationType.UUID) private UUID id;
     @Column(name = "name", nullable = false, unique = true) private String name;
     @Column(name = "location", nullable = false, unique = true) private String location;
-    @Builder.Default @Enumerated(EnumType.STRING)
+    @Setter(AccessLevel.PRIVATE) @Builder.Default @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false) private OfficeStatus status = OfficeStatus.AVAILABLE;
     @OneToMany(mappedBy = "office", fetch = FetchType.LAZY)  private List<Appointment> appointments;
 

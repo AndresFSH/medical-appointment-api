@@ -2,7 +2,7 @@ package edu.unimag.medicalappointment.repository;
 
 import edu.unimag.medicalappointment.domain.entity.*;
 import edu.unimag.medicalappointment.domain.entity.enums.AppointmentStatus;
-import edu.unimag.medicalappointment.repository.projection.SpecialtyCountProjection;
+import edu.unimag.medicalappointment.domain.projection.SpecialtyCountProjection;
 import edu.unimag.medicalappointment.testutil.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
