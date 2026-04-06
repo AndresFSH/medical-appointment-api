@@ -1,6 +1,5 @@
 package edu.unimag.medicalappointment.services;
 
-import edu.unimag.medicalappointment.domain.entity.AppointmentType;
 import edu.unimag.medicalappointment.dto.AvailabilityDTO.*;
 
 import java.time.LocalDate;
