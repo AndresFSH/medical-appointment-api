@@ -25,7 +25,7 @@ public class PatientServiceImpl implements PatientService{
     @Transactional
     public PatientResponse createPatient(CreatePatientRequest req) {
         if(patientRepo.existsByEmail(req.email())) {
-            throw new ConflictException("A patient with email "+req.email()+"   already exists");
+            throw new ConflictException("A patient with email "+req.email()+" already exists");
         }
         Patient patient = patientMapper.toEntity(req);
         return patientMapper.toResponse(patientRepo.save(patient));

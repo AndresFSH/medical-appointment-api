@@ -1,6 +1,5 @@
 package edu.unimag.medicalappointment.dto;
 
-import edu.unimag.medicalappointment.domain.entity.AppointmentType;
 import edu.unimag.medicalappointment.domain.entity.enums.AppointmentStatus;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;

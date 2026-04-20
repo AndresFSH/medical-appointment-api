@@ -5,7 +5,7 @@ import edu.unimag.medicalappointment.dto.DoctorScheduleDTO.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {DoctorMapper.class})
 public interface DoctorScheduleMapper {
 
     @Mapping(target = "scheduleId", source = "id")
