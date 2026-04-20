@@ -205,7 +205,7 @@ public class AppointmentControllerTest {
         var req = new CompleteAppointmentRequest("observations");
 
         when(service.completeAppointment(eq(appointmentId), any())).thenThrow(
-                new BusinessException("Appointment can´t be completed before its start time"));
+                new BusinessException("Appointment can't be completed before its start time"));
 
         mvc.perform(put("/api/appointments/{id}/complete",appointmentId).
                 contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsString(req))).
